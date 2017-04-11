@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
  * @date 2014年2月14日
  * @version 1.0
  */
-public class TimeClientHandler extends ChannelHandlerAdapter {
+public class TimeClientHandler extends SimpleChannelInboundHandler<Object> {
 
     private static final Logger logger = Logger
 	    .getLogger(TimeClientHandler.class.getName());
@@ -55,7 +56,7 @@ public class TimeClientHandler extends ChannelHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(ChannelHandlerContext ctx, Object msg)
 	    throws Exception {
 	String body = (String) msg;
 	System.out.println("Now is : " + body + " ; the counter is : "

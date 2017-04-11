@@ -39,7 +39,8 @@ public class FileServerHandler extends SimpleChannelInboundHandler<String> {
      * io.netty.channel.SimpleChannelInboundHandler#messageReceived(io.netty
      * .channel.ChannelHandlerContext, java.lang.Object)
      */
-    public void messageReceived(ChannelHandlerContext ctx, String msg)
+    @Override
+    public void channelRead0(ChannelHandlerContext ctx, String msg)
 	    throws Exception {
 	File file = new File(msg);
 	if (file.exists()) {

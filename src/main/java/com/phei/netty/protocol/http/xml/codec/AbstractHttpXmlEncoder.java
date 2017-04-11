@@ -62,7 +62,7 @@ public abstract class AbstractHttpXmlEncoder<T> extends
      * 
      * Sub-classes may override this method to change behavior.
      */
-    @Skip
+//    @Skip
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
 	    throws Exception {

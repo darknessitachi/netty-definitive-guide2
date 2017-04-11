@@ -15,12 +15,12 @@
  */
 package com.phei.netty.protocol.http.xml.client;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import com.phei.netty.protocol.http.xml.codec.HttpXmlRequest;
 import com.phei.netty.protocol.http.xml.codec.HttpXmlResponse;
 import com.phei.netty.protocol.http.xml.pojo.OrderFactory;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * @author Administrator
@@ -44,7 +44,7 @@ public class HttpXmlClientHandle extends
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx,
+    protected void channelRead0(ChannelHandlerContext ctx,
 	    HttpXmlResponse msg) throws Exception {
 	System.out.println("The client receive response of http header is : "
 		+ msg.getHttpResponse().headers().names());

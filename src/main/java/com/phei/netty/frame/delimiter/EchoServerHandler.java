@@ -20,6 +20,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * @author lilinfeng
@@ -27,12 +28,12 @@ import io.netty.channel.ChannelHandlerContext;
  * @version 1.0
  */
 @Sharable
-public class EchoServerHandler extends ChannelHandlerAdapter {
+public class EchoServerHandler extends SimpleChannelInboundHandler<Object> {
 
     int counter = 0;
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(ChannelHandlerContext ctx, Object msg)
 	    throws Exception {
 	String body = (String) msg;
 	System.out.println("This is " + ++counter + " times receive client : ["

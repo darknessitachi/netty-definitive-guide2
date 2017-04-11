@@ -17,6 +17,7 @@ package com.phei.netty.codec.protobuf;
 
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
  * @date 2014年2月14日
  * @version 1.0
  */
-public class SubReqClientHandler extends ChannelHandlerAdapter {
+public class SubReqClientHandler extends SimpleChannelInboundHandler<Object> {
 
     /**
      * Creates a client-side handler.
@@ -57,7 +58,7 @@ public class SubReqClientHandler extends ChannelHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(ChannelHandlerContext ctx, Object msg)
 	    throws Exception {
 	System.out.println("Receive server response : [" + msg + "]");
     }

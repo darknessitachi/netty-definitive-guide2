@@ -29,7 +29,7 @@ public class ChineseProverbClientHandler extends
 	SimpleChannelInboundHandler<DatagramPacket> {
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, DatagramPacket msg)
+    public void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg)
 	    throws Exception {
 	String response = msg.content().toString(CharsetUtil.UTF_8);
 	if (response.startsWith("谚语查询结果: ")) {

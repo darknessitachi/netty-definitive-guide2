@@ -64,24 +64,6 @@ public class SecureChatServerHandler extends
 		});
     }
 
-    @Override
-    public void messageReceived(ChannelHandlerContext ctx, String msg)
-	    throws Exception {
-	// Send the received message to all channels but the current one.
-	for (Channel c : channels) {
-	    if (c != ctx.channel()) {
-		c.writeAndFlush("[" + ctx.channel().remoteAddress() + "] "
-			+ msg + '\n');
-	    } else {
-		c.writeAndFlush("[you] " + msg + '\n');
-	    }
-	}
-
-	// Close the connection if the client has sent 'bye'.
-	if ("bye".equals(msg.toLowerCase())) {
-	    ctx.close();
-	}
-    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
@@ -91,4 +73,22 @@ public class SecureChatServerHandler extends
 		cause);
 	ctx.close();
     }
+
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+		// Send the received message to all channels but the current one.
+		for (Channel c : channels) {
+		    if (c != ctx.channel()) {
+			c.writeAndFlush("[" + ctx.channel().remoteAddress() + "] "
+				+ msg + '\n');
+		    } else {
+			c.writeAndFlush("[you] " + msg + '\n');
+		    }
+		}
+
+		// Close the connection if the client has sent 'bye'.
+		if ("bye".equals(msg.toLowerCase())) {
+		    ctx.close();
+		}
+	}
 }

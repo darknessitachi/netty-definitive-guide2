@@ -41,7 +41,7 @@ public class ChineseProverbServerHandler extends
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx, DatagramPacket packet)
+    public void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet)
 	    throws Exception {
 	String req = packet.content().toString(CharsetUtil.UTF_8);
 	System.out.println(req);

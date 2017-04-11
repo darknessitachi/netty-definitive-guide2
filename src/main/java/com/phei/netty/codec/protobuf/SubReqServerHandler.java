@@ -18,6 +18,7 @@ package com.phei.netty.codec.protobuf;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * @author lilinfeng
@@ -25,10 +26,10 @@ import io.netty.channel.ChannelHandlerContext;
  * @version 1.0
  */
 @Sharable
-public class SubReqServerHandler extends ChannelHandlerAdapter {
+public class SubReqServerHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(ChannelHandlerContext ctx, Object msg)
 	    throws Exception {
 	SubscribeReqProto.SubscribeReq req = (SubscribeReqProto.SubscribeReq) msg;
 	if ("Lilinfeng".equalsIgnoreCase(req.getUserName())) {

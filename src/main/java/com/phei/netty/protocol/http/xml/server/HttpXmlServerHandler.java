@@ -48,23 +48,11 @@ import com.phei.netty.protocol.http.xml.pojo.Order;
 public class HttpXmlServerHandler extends
 	SimpleChannelInboundHandler<HttpXmlRequest> {
 
-    @Override
-    public void messageReceived(final ChannelHandlerContext ctx,
-	    HttpXmlRequest xmlRequest) throws Exception {
-	HttpRequest request = xmlRequest.getRequest();
-	Order order = (Order) xmlRequest.getBody();
-	System.out.println("Http server receive request : " + order);
-	dobusiness(order);
-	ChannelFuture future = ctx.writeAndFlush(new HttpXmlResponse(null,
-		order));
-	if (!isKeepAlive(request)) {
-	    future.addListener(new GenericFutureListener<Future<? super Void>>() {
-		public void operationComplete(Future future) throws Exception {
-		    ctx.close();
-		}
-	    });
-	}
-    }
+//    @Override
+//    public void messageReceived(final ChannelHandlerContext ctx,
+//	    HttpXmlRequest xmlRequest) throws Exception {
+//	
+//    }
 
     private void dobusiness(Order order) {
 	order.getCustomer().setFirstName("狄");
@@ -98,4 +86,21 @@ public class HttpXmlServerHandler extends
 	response.headers().set(CONTENT_TYPE, "text/plain; charset=UTF-8");
 	ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
+
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, HttpXmlRequest xmlRequest) throws Exception {
+		HttpRequest request = xmlRequest.getRequest();
+		Order order = (Order) xmlRequest.getBody();
+		System.out.println("Http server receive request : " + order);
+		dobusiness(order);
+		ChannelFuture future = ctx.writeAndFlush(new HttpXmlResponse(null,
+			order));
+		if (!isKeepAlive(request)) {
+		    future.addListener(new GenericFutureListener<Future<? super Void>>() {
+			public void operationComplete(Future future) throws Exception {
+			    ctx.close();
+			}
+		    });
+		}
+	}
 }

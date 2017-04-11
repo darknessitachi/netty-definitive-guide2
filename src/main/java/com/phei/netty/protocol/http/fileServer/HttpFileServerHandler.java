@@ -71,7 +71,7 @@ public class HttpFileServerHandler extends
     }
 
     @Override
-    public void messageReceived(ChannelHandlerContext ctx,
+    public void channelRead0(ChannelHandlerContext ctx,
 	    FullHttpRequest request) throws Exception {
 	if (!request.getDecoderResult().isSuccess()) {
 	    sendError(ctx, BAD_REQUEST);

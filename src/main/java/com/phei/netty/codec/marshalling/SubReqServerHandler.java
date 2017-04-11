@@ -18,6 +18,7 @@ package com.phei.netty.codec.marshalling;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 import com.phei.netty.codec.pojo.SubscribeReq;
 import com.phei.netty.codec.pojo.SubscribeResp;
@@ -28,10 +29,10 @@ import com.phei.netty.codec.pojo.SubscribeResp;
  * @version 1.0
  */
 @Sharable
-public class SubReqServerHandler extends ChannelHandlerAdapter {
+public class SubReqServerHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(ChannelHandlerContext ctx, Object msg)
 	    throws Exception {
 	SubscribeReq req = (SubscribeReq) msg;
 	if ("Lilinfeng".equalsIgnoreCase(req.getUserName())) {

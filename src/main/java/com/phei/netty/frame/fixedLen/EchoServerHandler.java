@@ -18,6 +18,7 @@ package com.phei.netty.frame.fixedLen;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 /**
  * @author lilinfeng
@@ -25,10 +26,10 @@ import io.netty.channel.ChannelHandlerContext;
  * @version 1.0
  */
 @Sharable
-public class EchoServerHandler extends ChannelHandlerAdapter {
+public class EchoServerHandler extends SimpleChannelInboundHandler<Object> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(ChannelHandlerContext ctx, Object msg)
 	    throws Exception {
 	System.out.println("Receive client : [" + msg + "]");
     }
