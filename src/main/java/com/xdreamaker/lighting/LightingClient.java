@@ -17,22 +17,12 @@ public class LightingClient extends NettyClient {
 	}
 
 	public void openLight(String lightingId) {
-		String xiangdao = lightingId.substring(0, 3);
-		String cell = lightingId.substring(3, 7);
-		String row = lightingId.substring(7, 10);
-		System.out.println(xiangdao);
-		System.out.println(cell);
-		System.out.println(row);
-		
-		int stationNo = 1;// 站号
-		int cargoNo = 15;// 仓位号
-		
 		NettyMessage message = new NettyMessage();
 		Header header = new Header();
 		header.setType(MessageType.OpenLight.value());
 		message.setHeader(header);
 		
-		message.setBody("");
+		message.setBody(lightingId);
 		
 		sendMessage(message);
 	}
@@ -43,7 +33,7 @@ public class LightingClient extends NettyClient {
 		header.setType(MessageType.CloseLight.value());
 		message.setHeader(header);
 		
-		message.setBody("");
+		message.setBody(lightingId);
 		
 		sendMessage(message);
 	}

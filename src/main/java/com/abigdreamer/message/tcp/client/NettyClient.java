@@ -42,7 +42,7 @@ public class NettyClient {
 	
 	private NettyMessageHandler messageHandler;
 	
-	public void connect(String serverHost, int serverPort) throws Exception {
+	public void connect(final String serverHost, final int serverPort) throws Exception {
 		// 配置客户端NIO线程组
 		try {
 			Bootstrap b = new Bootstrap();

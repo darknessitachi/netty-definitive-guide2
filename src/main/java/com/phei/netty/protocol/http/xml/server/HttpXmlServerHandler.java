@@ -88,7 +88,7 @@ public class HttpXmlServerHandler extends
     }
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, HttpXmlRequest xmlRequest) throws Exception {
+	protected void channelRead0(final ChannelHandlerContext ctx, HttpXmlRequest xmlRequest) throws Exception {
 		HttpRequest request = xmlRequest.getRequest();
 		Order order = (Order) xmlRequest.getBody();
 		System.out.println("Http server receive request : " + order);

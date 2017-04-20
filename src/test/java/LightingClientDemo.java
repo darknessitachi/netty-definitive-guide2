@@ -10,12 +10,12 @@ public class LightingClientDemo {
 	
 	public static void main(String[] args) {
 		// 服务器 ip
-		String serverIp = "192.1658.0.100";
+		String serverIp = "192.168.0.166";
 		// 服务器端口
-		int serverPort = 8100;
+		int serverPort = 9028;
 
 		// 灯控制客户端
-		String localHost = "127.0.0.1";
+		String localHost = "192.168.0.166";
 	    int localPort = 12088;
 		LightingClient client = new LightingClient(localHost, localPort);
 		// 连接服务器
@@ -25,7 +25,7 @@ public class LightingClientDemo {
 			e.printStackTrace();
 		}
 
-		String lightingId = "0181007005002";//018 1007 005 002	18巷道7列5层 二楼
+		String lightingId = "0011001005002";//018 1007 005 002	18巷道7列5层 二楼
 
 		// 灯点亮
 		client.openLight(lightingId);
