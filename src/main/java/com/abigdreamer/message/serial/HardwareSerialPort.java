@@ -109,8 +109,8 @@ public class HardwareSerialPort {
 		for (String s : NRSerialPort.getAvailableSerialPorts()) {
 			System.out.println("Availible port: " + s);
 		}
-		String port = "COM1";
-		int baudRate = 9600;
+		String port = "/dev/tty.SLAB_USBtoUART";
+		int baudRate = 115200;
 		HardwareSerialPort hardwareSerialPort = new HardwareSerialPort(port, baudRate);
 		hardwareSerialPort.connect();
 

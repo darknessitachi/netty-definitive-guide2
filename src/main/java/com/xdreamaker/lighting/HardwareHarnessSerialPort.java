@@ -38,8 +38,9 @@ public class HardwareHarnessSerialPort extends HardwareSerialPort {
 		String crc16 = String.format("%04x", crc);
 		String rc16Result = crc16.substring(2, 4) + " " + crc16.substring(0, 2); 
 		
-		System.out.println(hex + " " + rc16Result);
-		this.sendData(hex + " " + rc16Result);
+		String sendData= hex + " " + rc16Result;
+		System.out.println("[send data]" + sendData);
+		this.sendData(sendData);
 		
 		this.listener = null;
 		this.listener = listener;
@@ -62,12 +63,12 @@ public class HardwareHarnessSerialPort extends HardwareSerialPort {
 			System.out.println("Availible port: " + s);
 		}
 		
-		String port = "COM1";
-		int baudRate = 9600;
+		String port = "COM3";
+		int baudRate = 115200;
 		HardwareHarnessSerialPort hardwareSerialPort = new HardwareHarnessSerialPort(port, baudRate);
 		hardwareSerialPort.connect();
 		
-		hardwareSerialPort.sendLightingCommand(1, 0, true, null);
+		hardwareSerialPort.sendLightingCommand(1, 1, true, null);
 		
 		hardwareSerialPort.disconnect();
 	}

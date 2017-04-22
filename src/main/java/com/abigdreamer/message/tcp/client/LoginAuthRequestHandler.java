@@ -26,6 +26,7 @@ public class LoginAuthRequestHandler extends SimpleChannelInboundHandler<NettyMe
 	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		System.out.println("LoginAuthRequestHandler channelActived");
 		ctx.writeAndFlush(buildLoginRequest());
 	}
 
@@ -37,6 +38,7 @@ public class LoginAuthRequestHandler extends SimpleChannelInboundHandler<NettyMe
 	 */
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
+		NettyClient.ctx = ctx;
 		// 如果是握手应答消息，需要判断是否认证成功
 		if (message.getHeader() != null && message.getHeader().getType() == MessageType.LOGIN_RESPONSE.value()) {
 			byte loginResult = (byte) message.getBody();

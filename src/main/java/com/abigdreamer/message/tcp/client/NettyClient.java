@@ -11,6 +11,7 @@ import com.abigdreamer.message.tcp.struct.NettyMessage;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -40,14 +41,14 @@ public class NettyClient {
 		this.port = port;
 	}
 	
+	public static ChannelHandlerContext ctx;
+	
 	private NettyMessageHandler messageHandler;
 	
 	public void connect(final String serverHost, final int serverPort) throws Exception {
 		// 配置客户端NIO线程组
 		try {
 			Bootstrap b = new Bootstrap();
-			
-			messageHandler = new NettyMessageHandler();
 			
 			b.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true)
 					.handler(new ChannelInitializer<SocketChannel>() {
@@ -58,7 +59,9 @@ public class NettyClient {
 							ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
 							ch.pipeline().addLast("LoginAuthHandler", new LoginAuthRequestHandler());
 							ch.pipeline().addLast("HeartBeatHandler", new HeartBeatRequestHandler());
-							ch.pipeline().addLast("messageHandler", messageHandler);
+							
+							messageHandler = new NettyMessageHandler();
+							ch.pipeline().addLast(messageHandler);
 						}
 					});
 			// 发起异步连接操作

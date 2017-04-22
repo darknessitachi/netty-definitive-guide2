@@ -3,6 +3,7 @@ package com.abigdreamer.message.tcp.client;
 import com.abigdreamer.message.tcp.struct.NettyMessage;
 
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,12 +15,14 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * @version 1.0
  * @since 1.0
  */
+@Sharable
 public class NettyMessageHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private ChannelHandlerContext ctx;
 	
 	public void sendMessage(NettyMessage message) {
-		ctx.writeAndFlush(message);
+		System.out.println("sendMessage:" + ctx + ", " + message);
+		NettyClient.ctx.writeAndFlush(message);
 	}
 
 	/**
@@ -30,6 +33,7 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<Object> {
 	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		System.out.println("NettyMessageHandler cannel active, ctx:" + ctx);
 		this.ctx = ctx;
 	}
 
@@ -41,6 +45,8 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<Object> {
 	 */
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, Object message) throws Exception {
+		System.out.println("init nettyMessageHandler ctx," + ctx);
+		this.ctx = ctx;
 		ctx.fireChannelRead(message);
 	}
 

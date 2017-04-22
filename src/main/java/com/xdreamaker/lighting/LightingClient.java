@@ -17,6 +17,7 @@ public class LightingClient extends NettyClient {
 	}
 
 	public void openLight(String lightingId) {
+		System.out.println("open light:" + lightingId);
 		NettyMessage message = new NettyMessage();
 		Header header = new Header();
 		header.setType(MessageType.OpenLight.value());

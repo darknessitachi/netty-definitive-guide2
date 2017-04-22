@@ -1,9 +1,5 @@
 package com.xdreamaker.lighting;
 
-import java.io.File;
-
-import com.abigdreamer.ark.commons.util.PropertiesUtil;
-import com.abigdreamer.ark.framework.collection.Mapx;
 import com.abigdreamer.message.tcp.server.NettyServer;
 
 /**

@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.bcel.generic.NEW;
+
 import com.abigdreamer.ark.data.excel.ExcelReader;
 import com.abigdreamer.ark.data.excel.factory.Excel2007Factory;
 import com.abigdreamer.message.tcp.struct.NettyMessage;
 import com.google.common.base.Joiner;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -21,6 +24,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * @version 1.0
  * @since 1.0
  */
+@Sharable
 public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessage> {
 	
 	@Override
@@ -29,11 +33,11 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 			ctx.fireChannelRead(message);
 			return;
 		}
-		
+		System.out.println("on recived message, type: " + message.getHeader().getType() + ", body:" + message.getBody());
 		if (message.getHeader().getType() == MessageType.OpenLight.value()
 			|| message.getHeader().getType() == MessageType.CloseLight.value()) {
 			System.out.println("Receive client lighting message : ---> " + message);
-			
+			System.out.println("body:" + message.getBody().toString());
 			boolean isOpen = message.getHeader().getType() == MessageType.OpenLight.value();
 			onMessage(isOpen, message.getBody().toString());
 			
@@ -42,9 +46,13 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 		}
 	}
 	
-	Map<String, Integer> mapping = new HashMap<>();
+	private Map<String, Integer> mapping = new HashMap<>();
 	
-	public void readExcel() {
+	public LightControlHandler() {
+		readExcel();
+	}
+	
+	private void readExcel() {
 		String filePath = System.getProperty("user.dir") + File.separator + "CargoNoModbusMapping.xlsx";
 		File file = new File(filePath);
 		ExcelReader readExcel = new Excel2007Factory().createExcelReader(file);
@@ -68,17 +76,26 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 		}
 	}
 	
+	HardwareHarnessSerialPort hardwareSerialPort;
+	int count=0;
+	Object syncObject = new Object();
+	
 	public void onMessage(boolean isOpen, String lightingId) {
-		String port = Config.get("serialPort");
-		int baudRate = Config.getInt("baudRate");
-		HardwareHarnessSerialPort hardwareSerialPort = new HardwareHarnessSerialPort(port, baudRate);
-		hardwareSerialPort.connect();
+		if (hardwareSerialPort == null) {
+			synchronized (syncObject) {
+				String port = Config.get("serialPort");
+				int baudRate = Config.getInt("baudRate");
+				hardwareSerialPort = new HardwareHarnessSerialPort(port, baudRate);
+				hardwareSerialPort.connect();	
+			}
+		}
 		
-		int cargoNo = mapping.get(lightingId);
-		int cargoIndex = Integer.parseInt(lightingId.substring(0, 3));
-		hardwareSerialPort.sendLightingCommand(cargoIndex, cargoNo, isOpen, null);
-		
-		hardwareSerialPort.disconnect();
+		Integer cargoNo = mapping.get(lightingId);
+		if(cargoNo != null) {
+			int cargoIndex = Integer.parseInt(lightingId.substring(0, 3));
+			hardwareSerialPort.sendLightingCommand(cargoIndex, cargoNo, isOpen, null);
+		}
+//		hardwareSerialPort.disconnect();
 	}
 	
 	public static void main(String[] args) {

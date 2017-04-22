@@ -63,6 +63,7 @@ public class ByteUtil {
 	 * @return 将十六进制转换为字节数组
 	 */
 	public static byte[] hexString2Bytes(String hexString) {
+		hexString = hexString.toUpperCase();
 		hexString = hexString.replaceAll(" ", "");
 		// hexString的长度对2取整，作为bytes的长度
 		int len = hexString.length() / 2;
@@ -80,15 +81,20 @@ public class ByteUtil {
 	}
 	
 	public static void main(String[] args) {
-		String str = "二进制与十六进制互转测试";
-		System.out.println("源字符串：\n"+str);
+//		String str = "二进制与十六进制互转测试";
+//		System.out.println("源字符串：\n"+str);
+//		
+//		String hexString = bytes2HexString(str.getBytes());
+//		System.out.println("转换为十六进制：\n"+hexString);
+//		System.out.println("转换为二进制：\n"+bytes2BinaryStr(str.getBytes()));
+//		
+//		byte [] bArray = hexString2Bytes(hexString);
+//		System.out.println("将str的十六进制文件转换为二进制再转为String：\n"+new String(bArray));
+//		
 		
-		String hexString = bytes2HexString(str.getBytes());
-		System.out.println("转换为十六进制：\n"+hexString);
-		System.out.println("转换为二进制：\n"+bytes2BinaryStr(str.getBytes()));
-		
-		byte [] bArray = hexString2Bytes(hexString);
-		System.out.println("将str的十六进制文件转换为二进制再转为String：\n"+new String(bArray));
+		String hexString = "01 05 00 01 FF 00 DD FA";
+		byte[] bytes = hexString2Bytes(hexString);
+		System.out.println(bytes2HexString(bytes));
 	}
 }
 

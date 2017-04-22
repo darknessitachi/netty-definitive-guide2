@@ -21,6 +21,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class HeartBeatRequestHandler extends SimpleChannelInboundHandler<NettyMessage> {
 
 	private volatile ScheduledFuture<?> heartBeat;
+	
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		System.out.println("HeartBeatRequestHandler channelActived");
+	}
 
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
