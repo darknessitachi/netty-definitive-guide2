@@ -71,7 +71,20 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 			String[] rows = readExcel.readExcelLine(i);
 			if(rows != null) {
 				System.out.println("[" + i + "]" + Joiner.on("  ").join(rows));
-				mapping.put(rows[0], Integer.parseInt(rows[2]));
+				try {
+					mapping.put(rows[0], Integer.parseInt(rows[2]));
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+					System.out.println("配置信息错误：" + rows[0] + "," + rows[1] + "," + rows[2]);
+					System.out.println("尝试强制转换");
+					try {
+						mapping.put(rows[0], (int)Double.parseDouble(rows[2]));
+						System.out.println("强制转换成功");
+					} catch (NumberFormatException e1) {
+						//e1.printStackTrace();
+						System.out.println("强制转换失败，请检查配置");	
+					}
+				}
 			}
 		}
 	}
@@ -98,8 +111,13 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 //		hardwareSerialPort.disconnect();
 	}
 	
+//	public static void main(String[] args) {
+//		new LightControlHandler().readExcel();
+//	}
+	
 	public static void main(String[] args) {
-		new LightControlHandler().readExcel();
+		int value = (int)Double.parseDouble("8.0");
+		System.out.println(value);
 	}
 
 }
