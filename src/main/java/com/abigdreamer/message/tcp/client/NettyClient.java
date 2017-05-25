@@ -41,14 +41,17 @@ public class NettyClient {
 		this.port = port;
 	}
 	
-	public static ChannelHandlerContext ctx;
+	public ChannelHandlerContext context;
 	
 	private NettyMessageHandler messageHandler;
 	
 	public void connect(final String serverHost, final int serverPort) throws Exception {
 		// 配置客户端NIO线程组
 		try {
+			final NettyClient nettyClient = this;
 			Bootstrap b = new Bootstrap();
+			
+			messageHandler = new NettyMessageHandler(nettyClient);
 			
 			b.group(group).channel(NioSocketChannel.class).option(ChannelOption.TCP_NODELAY, true)
 					.handler(new ChannelInitializer<SocketChannel>() {
@@ -57,10 +60,10 @@ public class NettyClient {
 							ch.pipeline().addLast(new NettyMessageDecoder(1024 * 1024, 4, 4));
 							ch.pipeline().addLast("MessageEncoder", new NettyMessageEncoder());
 							ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(50));
-							ch.pipeline().addLast("LoginAuthHandler", new LoginAuthRequestHandler());
+							ch.pipeline().addLast("LoginAuthHandler", new LoginAuthRequestHandler(nettyClient));
 							ch.pipeline().addLast("HeartBeatHandler", new HeartBeatRequestHandler());
 							
-							messageHandler = new NettyMessageHandler();
+							
 							ch.pipeline().addLast(messageHandler);
 						}
 					});

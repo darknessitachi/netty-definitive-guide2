@@ -20,9 +20,15 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<Object> {
 	
 	private ChannelHandlerContext ctx;
 	
+	NettyClient nettyClient;
+	
+	public NettyMessageHandler(NettyClient nettyClient) {
+		this.nettyClient = nettyClient;
+	}
+	
 	public void sendMessage(NettyMessage message) {
 		System.out.println("sendMessage:" + ctx + ", " + message);
-		NettyClient.ctx.writeAndFlush(message);
+		nettyClient.context.writeAndFlush(message);
 	}
 
 	/**

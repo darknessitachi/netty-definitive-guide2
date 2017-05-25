@@ -18,6 +18,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class LoginAuthRequestHandler extends SimpleChannelInboundHandler<NettyMessage> {
 
+	NettyClient nettyClient;
+	
+	public LoginAuthRequestHandler(NettyClient nettyClient) {
+		this.nettyClient = nettyClient;
+	}
 	/**
 	 * Calls {@link ChannelHandlerContext#fireChannelActive()} to forward to the
 	 * next {@link ChannelHandler} in the {@link ChannelPipeline}.
@@ -38,7 +43,7 @@ public class LoginAuthRequestHandler extends SimpleChannelInboundHandler<NettyMe
 	 */
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
-		NettyClient.ctx = ctx;
+		nettyClient.context = ctx;
 		// 如果是握手应答消息，需要判断是否认证成功
 		if (message.getHeader() != null && message.getHeader().getType() == MessageType.LOGIN_RESPONSE.value()) {
 			byte loginResult = (byte) message.getBody();

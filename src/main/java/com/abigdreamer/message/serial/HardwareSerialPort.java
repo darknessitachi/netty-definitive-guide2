@@ -9,7 +9,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.abigdreamer.commons.util.ByteUtil;
 
-import gnu.io.NRSerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
