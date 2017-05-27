@@ -1,16 +1,10 @@
 package com.xdreamaker.lighting;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.bcel.generic.NEW;
-
-import com.abigdreamer.ark.data.excel.ExcelReader;
-import com.abigdreamer.ark.data.excel.factory.Excel2007Factory;
+import com.abigdreamer.commons.util.ByteUtil;
+import com.abigdreamer.message.serial.HardwareSerialPort.DataRecivedListener;
 import com.abigdreamer.message.tcp.struct.NettyMessage;
-import com.google.common.base.Joiner;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,47 +40,8 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 		}
 	}
 	
-	private Map<String, Integer> mapping = new HashMap<>();
-	
 	public LightControlHandler() {
-		readExcel();
-	}
-	
-	private void readExcel() {
-		String filePath = System.getProperty("user.dir") + File.separator + "CargoNoModbusMapping.xlsx";
-		File file = new File(filePath);
-		ExcelReader readExcel = new Excel2007Factory().createExcelReader(file);
-		try {
-			readExcel.open();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		readExcel.setSheetNum(0); // 设置读取索引为0的工作表
-		// 总行数
-		int count = readExcel.getRowCount();
-		
-		mapping.clear(); 
-		
-		for (int i = 0; i <= count; i++) {
-			String[] rows = readExcel.readExcelLine(i);
-			if(rows != null) {
-				System.out.println("[" + i + "]" + Joiner.on("  ").join(rows));
-				try {
-					mapping.put(rows[0], Integer.parseInt(rows[2]));
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-					System.out.println("配置信息错误：" + rows[0] + "," + rows[1] + "," + rows[2]);
-					System.out.println("尝试强制转换");
-					try {
-						mapping.put(rows[0], (int)Double.parseDouble(rows[2]));
-						System.out.println("强制转换成功");
-					} catch (NumberFormatException e1) {
-						//e1.printStackTrace();
-						System.out.println("强制转换失败，请检查配置");	
-					}
-				}
-			}
-		}
+		LightingConfig.readExcel();
 	}
 	
 	HardwareHarnessSerialPort hardwareSerialPort;
@@ -96,14 +51,40 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 	public void onMessage(boolean isOpen, String lightingId) {
 		if (hardwareSerialPort == null) {
 			synchronized (syncObject) {
-				String port = Config.get("serialPort");
-				int baudRate = Config.getInt("baudRate");
-				hardwareSerialPort = new HardwareHarnessSerialPort(port, baudRate);
-				hardwareSerialPort.connect();	
+				if(hardwareSerialPort == null) {
+					String port = Config.get("serialPort");
+					int baudRate = Config.getInt("baudRate");
+					hardwareSerialPort = new HardwareHarnessSerialPort(port, baudRate);
+					hardwareSerialPort.connect();	
+					
+					final AtomicInteger atomicInteger = new AtomicInteger();
+					final LongValue allCost = new LongValue(0);
+					
+					hardwareSerialPort.addListener(new DataRecivedListener() {
+						@Override
+						public void onRecived(byte[] data, long cost) {
+							allCost.add(cost);
+							atomicInteger.getAndIncrement();
+							
+	//						if(atomicInteger.get()%10==0) {
+	////							System.out.println(allCost.get());
+	////							System.out.println(atomicInteger.get());
+	//							long avgCost = allCost.get()/(atomicInteger.get()+0L);
+	////							System.out.println(atomicInteger.get()%10==0);
+	////							System.out.println(avgCost);
+	////							System.out.println("cost:" + allCost.get()/atomicInteger.get());
+	//							System.out.println("recived["+atomicInteger.get()+"], avgCost: "+avgCost);	
+	//						}
+							
+							System.out.println("recived["+atomicInteger.get()+"], cost: "+cost+",message:" + ByteUtil.bytes2HexString(data));	
+							//hardwareSerialPort.disconnect();
+						}
+					});
+				}
 			}
 		}
 		
-		Integer cargoNo = mapping.get(lightingId);
+		Integer cargoNo = LightingConfig.getCargoNo(lightingId);
 		if(cargoNo != null) {
 			int cargoIndex = Integer.parseInt(lightingId.substring(0, 3));
 			hardwareSerialPort.sendLightingCommand(cargoIndex, cargoNo, isOpen);

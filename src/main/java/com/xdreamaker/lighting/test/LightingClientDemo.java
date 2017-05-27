@@ -1,3 +1,4 @@
+package com.xdreamaker.lighting.test;
 import com.xdreamaker.lighting.LightingClient;
 
 /**
@@ -9,14 +10,16 @@ import com.xdreamaker.lighting.LightingClient;
 public class LightingClientDemo {
 	
 	public static void main(String[] args) {
+		final String testIp = "127.0.0.1";//"192.168.1.10";//
+		
 		// 服务器 ip
-		final String serverIp = "127.0.0.1";
+		final String serverIp = testIp;//"192.168.1.10";
 		// 服务器端口
 		final int serverPort = 9028;
 
 		// 灯控制客户端
-		final String localHost = "127.0.0.1";
-		final int localPort = 12088;
+		final String localHost = testIp;//"192.168.1.10";
+		final int localPort = 12188;
 		final LightingClient client = new LightingClient(localHost, localPort);
 		
 		System.out.println("before connect");
@@ -35,25 +38,30 @@ public class LightingClientDemo {
 		}).start();
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
 		System.out.println("after connect");
 		
-		String lightingId = "0011007001002";//018 1007 005 002	18巷道7列5层 二楼
-
+		String lightingId5 = "0051006001002";//"0301001003000";//018 1007 005 002	18巷道7列5层 二楼
+		String lightingId6 = "0061002005002";
+		
 		System.out.println("send before");
-		// 灯点亮
-		client.openLight(lightingId);
+		
+		for (int i = 0; i < 10000; i++) {
+			String lightingId = i % 2 == 0 ? lightingId5 : lightingId6;
+			// 灯点亮
+			client.openLight(lightingId);
 
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			// 灯关闭
+			client.closeLight(lightingId);
 		}
-		// 灯关闭
-		client.closeLight(lightingId);
 	}
 }

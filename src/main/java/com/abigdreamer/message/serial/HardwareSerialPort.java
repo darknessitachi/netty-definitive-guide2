@@ -14,7 +14,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.abigdreamer.ark.framework.collection.TwoTuple;
 import com.abigdreamer.commons.util.ByteUtil;
-import com.sun.star.uno.RuntimeException;
 import com.xdreamaker.lighting.LongValue;
 
 import gnu.io.SerialPortEvent;
@@ -70,11 +69,18 @@ public class HardwareSerialPort {
 						}
 					}
 					
+					
 					TwoTuple<String, Boolean>  info = queue.poll();
 					if(info != null) {
 						boolean needLock = info.second;
 						if(needLock) {
 							count.incrementAndGet();
+						}
+						
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 						
 //						if(start == 0) {

@@ -79,7 +79,7 @@ public class HardwareHarnessSerialPort extends HardwareSerialPort {
 		
 		for (int i = 0; i < 10; i++) {
 //			Thread.sleep(500);
-			hardwareSerialPort.sendLightingCommand(5, 1, true);
+			hardwareSerialPort.sendLightingCommand(30, 11, true);
 		}
 //		hardwareSerialPort.disconnect();
 	}
