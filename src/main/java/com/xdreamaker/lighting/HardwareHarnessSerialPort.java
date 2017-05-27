@@ -2,6 +2,7 @@ package com.xdreamaker.lighting;
 
 import java.io.IOException;
 import java.util.TooManyListenersException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.abigdreamer.commons.util.ByteUtil;
 import com.abigdreamer.message.serial.CRC16;
@@ -14,21 +15,8 @@ public class HardwareHarnessSerialPort extends HardwareSerialPort {
 	public HardwareHarnessSerialPort(String port, int baudRate) {
 		super(port, baudRate);
 	}
-	@Override
-	public void onDataRecived(byte[] data) {
-		super.onDataRecived(data);
-		if(listener != null) {
-			listener.onRecived(data);
-		}
-	}
 	
-	DataRecivedListener listener = null;
-	
-	public static interface DataRecivedListener {
-		void onRecived(byte[] data);
-	}
-	
-	public void sendLightingCommand(int cargoIndex, int cargoNo, boolean isOpen, DataRecivedListener listener) {
+	public void sendLightingCommand(int cargoIndex, int cargoNo, boolean isOpen) {
 		
 		String cargoIndexHex = String.format("%02x", cargoIndex);
 		String cargoNoHex = String.format("%02x", cargoNo);
@@ -40,10 +28,7 @@ public class HardwareHarnessSerialPort extends HardwareSerialPort {
 		
 		String sendData= hex + " " + rc16Result;
 		System.out.println("[send data]" + sendData);
-		this.sendData(sendData);
-		
-		this.listener = null;
-		this.listener = listener;
+		this.sendData(sendData, true);
 	}
 	
 	/** 
@@ -58,19 +43,45 @@ public class HardwareHarnessSerialPort extends HardwareSerialPort {
         return array;  
     }
 	
-	public static void main(String[] args) throws IOException, TooManyListenersException {
+	public static void main(String[] args) throws IOException, TooManyListenersException, InterruptedException {
 		for (String s : NRSerialPort.getAvailableSerialPorts()) {
 			System.out.println("Availible port: " + s);
 		}
 		
 		String port = "COM3";
-		int baudRate = 115200;
+		int baudRate = 9600;
 		HardwareHarnessSerialPort hardwareSerialPort = new HardwareHarnessSerialPort(port, baudRate);
 		hardwareSerialPort.connect();
 		
-		hardwareSerialPort.sendLightingCommand(1, 1, true, null);
+		final AtomicInteger atomicInteger = new AtomicInteger();
+		final LongValue allCost = new LongValue(0);
 		
-		hardwareSerialPort.disconnect();
+		hardwareSerialPort.addListener(new DataRecivedListener() {
+			@Override
+			public void onRecived(byte[] data, long cost) {
+				allCost.add(cost);
+				atomicInteger.getAndIncrement();
+				
+//				if(atomicInteger.get()%10==0) {
+////					System.out.println(allCost.get());
+////					System.out.println(atomicInteger.get());
+//					long avgCost = allCost.get()/(atomicInteger.get()+0L);
+////					System.out.println(atomicInteger.get()%10==0);
+////					System.out.println(avgCost);
+////					System.out.println("cost:" + allCost.get()/atomicInteger.get());
+//					System.out.println("recived["+atomicInteger.get()+"], avgCost: "+avgCost);	
+//				}
+				
+				System.out.println("recived["+atomicInteger.get()+"], cost: "+cost+",message:" + ByteUtil.bytes2HexString(data));	
+				//hardwareSerialPort.disconnect();
+			}
+		});
+		
+		for (int i = 0; i < 10; i++) {
+//			Thread.sleep(500);
+			hardwareSerialPort.sendLightingCommand(5, 1, true);
+		}
+//		hardwareSerialPort.disconnect();
 	}
 
 }

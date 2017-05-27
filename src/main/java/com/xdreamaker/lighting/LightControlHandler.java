@@ -106,7 +106,7 @@ public class LightControlHandler extends SimpleChannelInboundHandler<NettyMessag
 		Integer cargoNo = mapping.get(lightingId);
 		if(cargoNo != null) {
 			int cargoIndex = Integer.parseInt(lightingId.substring(0, 3));
-			hardwareSerialPort.sendLightingCommand(cargoIndex, cargoNo, isOpen, null);
+			hardwareSerialPort.sendLightingCommand(cargoIndex, cargoNo, isOpen);
 		}
 //		hardwareSerialPort.disconnect();
 	}

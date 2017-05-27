@@ -83,7 +83,7 @@ public class NRSerialPort
             }
 
             serial = (RXTXPort) comm;
-            serial.enableReceiveTimeout(5000);
+            serial.enableReceiveTimeout(1000);
             serial.setSerialPortParams(getBaud(), SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
             setConnected(true);
         }
@@ -229,5 +229,6 @@ public class NRSerialPort
     {
         return serial;
     }
+    
 }
 
